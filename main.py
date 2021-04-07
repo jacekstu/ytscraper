@@ -10,8 +10,3 @@ scraper_obj = Scraper('API_KEY')
 
 playlist_id = scraper_obj.get_playlist_id(channels_lt[0]) 
 videos = scraper_obj.get_videos(playlist_id)
-
-for vid in videos:
-	print(vid)
-
-print(len(videos))

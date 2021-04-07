@@ -47,8 +47,6 @@ class Scraper:
 
 		self.response = self.request.execute()
 
-		#for vid in self.response['items']:
-		#	self.video_lt.append(vid['snippet']['resourceId']['videoId'])
 		self.add_videos()
 
 		isMoreVideos = True if "nextPageToken" in self.response else False
@@ -64,8 +62,7 @@ class Scraper:
 
 			)
 			self.response = self.request.execute()
-		#	for vid in self.response['items']:
-		#		self.video_lt.append(vid['snippet']['resourceId']['videoId'])
+
 			self.add_videos()
 
 			isMoreVideos = True if "nextPageToken" in self.response else False
