@@ -14,8 +14,31 @@ class Scraper:
 		self.video_lt = []
 		self.test = []
 
+	def save_to_file(self, data):
+		db_file = open("all_data.txt", "a", encoding="utf-8")
+		json.dump(data, db_file, ensure_ascii=False)
+	
+
+	def parse_data_for_json(self, string_data):
+		#Turn dictionary into a string for json loading
+		self.save_to_file(string_data)
+		string_data = str(string_data)
+		# Have to replace the single quotes with double quotes
+		string_data = string_data.replace("\'", "\"")
+		no_links = string_data.replace("<a href=\"","link")
+		no_links2 = no_links.replace("\">","endlink")
+		return no_links2
+
 	def pack_json(self, string_data):
-		print(json.loads(string_data))
+
+		data = self.parse_data_for_json(string_data)
+
+		try:
+			json_data = json.loads(data)
+			print(json_data)
+		except Exception as e:
+			print(e)
+
 
 	def get_playlist_id(self, channel):
 
@@ -79,14 +102,17 @@ class Scraper:
 		# Get video title!
 		for comment in self.response['items']:
 		
+
+			text_displayed = comment["snippet"]["topLevelComment"]["snippet"]["textDisplay"].replace("&#39;", "")
+
 			comment_data = {
 		
 				"title" : video_title,
-				"text" : comment['snippet']['topLevelComment']['snippet']['textDisplay'],
-				"image_url" : comment['snippet']['topLevelComment']['snippet']['authorProfileImageUrl'],
-				"publication_date" : comment['snippet']['topLevelComment']['snippet']['publishedAt'],
-				"author" : comment['snippet']['topLevelComment']['snippet']['authorDisplayName'],
-				"link" : "https://www.youtube.com/watch?v=" + comment['snippet']['topLevelComment']['snippet']['videoId']
+				"text" : text_displayed,
+				"image_url" : comment["snippet"]["topLevelComment"]["snippet"]["authorProfileImageUrl"],
+				"publication_date" : comment["snippet"]["topLevelComment"]["snippet"]["publishedAt"],
+				"author" : comment["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"],
+				"link" : "https://www.youtube.com/watch?v=" + comment["snippet"]["topLevelComment"]["snippet"]["videoId"]
 			}
 			
 			self.pack_json(comment_data)
@@ -96,13 +122,13 @@ class Scraper:
 		comment_data = {
 			
 			"title" : video_title,
-			"text" : reply['snippet']['textDisplay'],
+			"text" : reply['snippet']['textDisplay'].replace("&#39;", ""),
 			"image_url" : reply['snippet']['authorProfileImageUrl'],
 			"publication_date" : reply['snippet']['publishedAt'],
 			"author" : reply['snippet']['authorDisplayName'],
 			"link" : "https://www.youtube.com/watch?v=" + reply['snippet']['videoId']
 		}
-		
+
 		self.pack_json(comment_data)
 
 	def get_replies(self, video_id, video_title):
@@ -143,7 +169,8 @@ class Scraper:
 		self.request = self.youtube.commentThreads().list(
 			part="snippet",
 			videoId=video_id,
-			maxResults=100
+			maxResults=100,
+			order="time"
 		)
 
 		self.response = self.request.execute()
@@ -152,12 +179,14 @@ class Scraper:
 
 		isMoreComments = True if "nextPageToken" in self.response else False
 
+
 		while isMoreComments:
 
 			self.request = self.youtube.commentThreads().list(
 				part="snippet",
 				videoId=video_id,
 				maxResults=100,
+				order="time",
 				pageToken=self.response['nextPageToken']
 			)			
 
