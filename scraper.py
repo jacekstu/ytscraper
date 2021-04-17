@@ -34,10 +34,10 @@ class Scraper:
 		data = self.parse_data_for_json(string_data)
 
 		try:
+			# READY JSON TO BE SENT TO THE DB
 			json_data = json.loads(data)
-			print(json_data)
 		except Exception as e:
-			print(e)
+			pass
 
 
 	def get_playlist_id(self, channel):
