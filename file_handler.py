@@ -13,6 +13,5 @@ class Handler:
 		return self.done_videos
 
 	def write_to_scraped(self, video):
-		print(video)
 		with open(self.filename, 'a+', encoding="utf-8") as f:
 			f.write(video + "\n")

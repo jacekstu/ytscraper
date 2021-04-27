@@ -3,21 +3,27 @@ import sys
 #print sys.stdout.encoding
 from googleapiclient.discovery import build
 import json
-
+import requests 
+from googleapiclient.errors import HttpError
 
 class Scraper:
 
-	def __init__(self, api_key):
+	def __init__(self, api_key, post_url):
 		
 		self.api_key = os.environ.get('API_KEY')
+		self.post_url = post_url
 		self.youtube = build('youtube', 'v3', developerKey=self.api_key)
 		self.video_lt = []
 		self.test = []
+		self.channel_title = ""
 
 	def save_to_file(self, data):
 		db_file = open("all_data.txt", "a", encoding="utf-8")
 		json.dump(data, db_file, ensure_ascii=False)
 	
+	def send_to_api(self, obj):
+		self.http_response = requests.post(self.post_url, json=obj)
+
 
 	def parse_data_for_json(self, string_data):
 		#Turn dictionary into a string for json loading
@@ -25,7 +31,7 @@ class Scraper:
 		string_data = str(string_data)
 		# Have to replace the single quotes with double quotes
 		string_data = string_data.replace("\'", "\"")
-		no_links = string_data.replace("<a href=\"","link")
+		no_links = string_data.replace("<a href=\""," link ")
 		no_links2 = no_links.replace("\">","endlink")
 		return no_links2
 
@@ -36,36 +42,50 @@ class Scraper:
 		try:
 			# READY JSON TO BE SENT TO THE DB
 			json_data = json.loads(data)
+			self.send_to_api(json_data)
 		except Exception as e:
 			pass
 
 
+	def get_channel_name(self, channel_id):
+		self.request = self.youtube.channels().list(
+			part=['snippet'],
+			id=channel_id
+		)
+		self.response = self.request.execute()
+		return self.response['items'][0]['snippet']['title']
+
 	def get_playlist_id(self, channel):
 
-		if channel["isLegacy"]:
-			self.request = self.youtube.channels().list(
+		try:
+			if channel['isLegacy']:
+				self.request = self.youtube.channels().list(
 				part=['contentDetails'],
 				forUsername=channel["channel"]
 			)
-		else:
-			self.request = self.youtube.channels().list(
+			else:
+				self.request = self.youtube.channels().list(
 				part=['contentDetails'],
 				id=channel["channel"]
 			)
 
-		try:
 			self.response = self.request.execute()
 			return self.response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
 
-		except Exception as e:
-			print(e)
-			return 0
+		except HttpError as err:
 
-	def add_videos(self):
+			if err.resp.status in [403,500,503]:
+				if err.resp.status == 403:
+					print("You have exceed your API Calls quota")
+			else:
+				print("Other error appeard during scraping")
+				print(err)
+
+	def add_videos(self, channel):
 		for vid in self.response['items']:
-			self.video_lt.append({"video_identificator":vid['snippet']['resourceId']['videoId'], "video_title":vid['snippet']['title']})
+			self.video_lt.append({"video_identificator":vid['snippet']['resourceId']['videoId'], "video_title":vid['snippet']['title'], 'channel_name':channel})
 
-	def get_videos(self, playlistId):
+	def get_videos(self, playlistId, channel):
 
 		self.request = self.youtube.playlistItems().list(
 			part="snippet", 
@@ -73,9 +93,10 @@ class Scraper:
 			maxResults=50,
 		)
 
+
 		self.response = self.request.execute()
 
-		self.add_videos()
+		self.add_videos(channel)
 
 		isMoreVideos = True if "nextPageToken" in self.response else False
 
@@ -90,9 +111,10 @@ class Scraper:
 				pageToken=next_page_token
 
 			)
+
 			self.response = self.request.execute()
 
-			self.add_videos()
+			self.add_videos(channel)
 
 			isMoreVideos = True if "nextPageToken" in self.response else False
 
@@ -100,17 +122,19 @@ class Scraper:
 
 	def add_comment_to_db(self, video_title):
 		# Get video title!
+
 		for comment in self.response['items']:
-		
 
 			text_displayed = comment["snippet"]["topLevelComment"]["snippet"]["textDisplay"].replace("&#39;", "")
+			date = comment["snippet"]["topLevelComment"]["snippet"]["publishedAt"].split('T')[0]
 
 			comment_data = {
 		
+				"channel" : self.channel_title,
 				"title" : video_title,
 				"text" : text_displayed,
-				"image_url" : comment["snippet"]["topLevelComment"]["snippet"]["authorProfileImageUrl"],
-				"publication_date" : comment["snippet"]["topLevelComment"]["snippet"]["publishedAt"],
+				"imageUrl" : comment["snippet"]["topLevelComment"]["snippet"]["authorProfileImageUrl"],
+				"date" : date,
 				"author" : comment["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"],
 				"link" : "https://www.youtube.com/watch?v=" + comment["snippet"]["topLevelComment"]["snippet"]["videoId"]
 			}
@@ -118,13 +142,16 @@ class Scraper:
 			self.pack_json(comment_data)
 
 	def add_reply_to_db(self, reply, video_title):
+
+		date = reply['snippet']['publishedAt'].split('T')[0]
 		
 		comment_data = {
 			
+			"channel" : self.channel_title,
 			"title" : video_title,
 			"text" : reply['snippet']['textDisplay'].replace("&#39;", ""),
-			"image_url" : reply['snippet']['authorProfileImageUrl'],
-			"publication_date" : reply['snippet']['publishedAt'],
+			"imageUrl" : reply['snippet']['authorProfileImageUrl'],
+			"date" : date,
 			"author" : reply['snippet']['authorDisplayName'],
 			"link" : "https://www.youtube.com/watch?v=" + reply['snippet']['videoId']
 		}
@@ -164,7 +191,9 @@ class Scraper:
 
 			isMoreComments = True if "nextPageToken" in self.response else False
 		
-	def scrape_comments(self, video_id, video_title):
+	def scrape_comments(self, video_id, video_title, channel_name):
+
+		self.channel_title = channel_name
 
 		self.request = self.youtube.commentThreads().list(
 			part="snippet",
