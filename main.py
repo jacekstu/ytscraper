@@ -3,7 +3,15 @@ filename = "scraping_list.txt"
 import json
 from file_handler import Handler
 from googleapiclient.errors import HttpError
+import sys
 
+# flag keeping track of errors
+isError = False
+# Errors
+HTTP_403_COMMENTS_DISABLED = "parameter has disabled comments"
+HTTP_404_NOT_FOUND = "parameter could not be found."
+HTTP_404_CANNOT_BE_FOUND = "parameter cannot be found."
+HTTP_403_QUOTA_EXCEEDED = "cannot be completed because you have exceeded"
 
 # 1 Create an object that stores the videos that have already been scraped
 fh = Handler("scraped.txt")
@@ -37,7 +45,7 @@ for idx, channel in enumerate(channels_lt):
 # 8 Scrape each video one at a time
 for vid in videos:
 	# 9 check if list of scraped videos has this video already scraped
-	if str(vid.get('video_identificator')) in scraped_videos:
+	if str(vid.get('video_identificator')) in scraped_videos: # might start causeing problems with huuuge number of videos
 		print(vid, "This video has been scraped before")
 	else:
 		fh.write_to_scraped(str(vid.get('video_identificator')))
@@ -47,16 +55,26 @@ for vid in videos:
 			print("Scraping video with title: %s from channel %s" % (vid.get('video_title'), vid.get('channel_name')))
 
 		except HttpError as err:
+			#print(err)
 
-			if err.resp.status in [403,500,503]:
+			if err.resp.status in [403,404,500,503]:
 				if err.resp.status == 403:
-					print("You have exceed your API Calls quota")
+					if HTTP_403_COMMENTS_DISABLED in str(err):
+						print("Error 403 - This video has comments disbaled %s " % (vid.get('video_title')))
+					if HTTP_403_QUOTA_EXCEEDED in str(err):
+						print("You have exceeded your quota")
+						isError = True
+						break
+				if err.resp.status == 404:
+					if HTTP_404_NOT_FOUND in str(err) or HTTP_404_CANNOT_BE_FOUND in str(err):
+						print("Error 404 - Parameter not found")
+				# sys.exit --> jak bedzie ze skonczyla sie quota
 			else:
-				print("Other error appeard during scraping")
+				print("Other error appeared during scraping")
 				print(err)
 		
-
-print("No more videos to scrape, please update scraping_list.txt")
+if not isError:
+	print("No more videos to scrape, please update scraping_list.txt")
 
 
 # Get  only username works correctly
