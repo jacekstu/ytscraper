@@ -143,6 +143,7 @@ class Scraper:
 			text_displayed = comment["snippet"]["topLevelComment"]["snippet"]["textDisplay"].replace("&#39;", "")
 			date = comment["snippet"]["topLevelComment"]["snippet"]["publishedAt"].split('T')[0]
 			likes = comment["snippet"]["topLevelComment"]["snippet"]["likeCount"]
+			user_id = comment["snippet"]["topLevelComment"]["snippet"]["authorChannelId"]["value"]
 
 			comment_data = {
 		
@@ -153,7 +154,8 @@ class Scraper:
 				"date" : date,
 				"author" : comment["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"],
 				"link" : "https://www.youtube.com/watch?v=" + comment["snippet"]["topLevelComment"]["snippet"]["videoId"],
-				"likes" : likes
+				"likes" : likes,
+				"userid" : user_id
 			}
 			
 			self.pack_json(comment_data)
@@ -161,6 +163,7 @@ class Scraper:
 	def add_reply_to_db(self, reply, video_title):
 
 		date = reply['snippet']['publishedAt'].split('T')[0]
+
 
 		comment_data = {
 			
@@ -171,7 +174,8 @@ class Scraper:
 			"date" : date,
 			"author" : reply['snippet']['authorDisplayName'],
 			"likes" : reply['snippet']['likeCount'],
-			"link" : "https://www.youtube.com/watch?v=" + reply['snippet']['videoId']
+			"link" : "https://www.youtube.com/watch?v=" + reply['snippet']['videoId'],
+			"userid" : reply['snippet']['authorChannelId']['value']
 		}
 
 		self.pack_json(comment_data)
