@@ -35,14 +35,16 @@ for channel in channels['channels']:
 	
 
 # 5 Iterate over channels, using indx 
+print("INFO: Getting playlist from each channel")
 for idx, channel in enumerate(channels_lt):
 	# 6 Get the playlist of every channel in your channel list
 	playlist_id  = scraper_obj.get_playlist_id(channels_lt[idx])
 	# 7 Get all the videos associated with a given channel
-	videos = scraper_obj.get_videos(playlist_id, channel.get('name'))
-
+	videos = scraper_obj.get_videos(playlist_id, channel)
+print("INFO: Done adding channels' playlists")
 
 # 8 Scrape each video one at a time
+print("INFO: Proceeding to scraping videos")
 for vid in videos:
 	# 9 check if list of scraped videos has this video already scraped
 	if str(vid.get('video_identificator')) in scraped_videos: # might start causeing problems with huuuge number of videos
@@ -74,7 +76,7 @@ for vid in videos:
 				print(err)
 		
 if not isError:
-	print("No more videos to scrape, please update scraping_list.txt")
+	print("INFO: No more videos to scrape, please update scraping_list.txt")
 
 
 # Get  only username works correctly
