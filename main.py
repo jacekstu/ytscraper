@@ -18,7 +18,7 @@ fh = Handler("scraped.txt")
 scraped_videos = fh.get_scraped_videos()
 
 # 2 Create a Scraper object, a class that stores all scraping code
-scraper_obj = Scraper('API_KEY', "http://localhost:8080/api/comments")
+scraper_obj = Scraper('API_KEY', "http://localhost:8080/api/")
 
 # 3 Create a list that will store the channels to scrape
 channels_lt = []

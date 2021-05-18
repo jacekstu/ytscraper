@@ -21,8 +21,9 @@ class Scraper:
 		db_file = open("all_data.txt", "a", encoding="utf-8")
 		json.dump(data, db_file, ensure_ascii=False)
 	
-	def send_to_api(self, obj):
-		self.http_response = requests.post(self.post_url, json=obj)
+	def send_to_api(self, obj, endpoint):
+		self.http_response = requests.post(self.post_url + endpoint, json=obj)
+		print(self.http_response.content)
 
 
 	def parse_data_for_json(self, string_data):
@@ -37,14 +38,14 @@ class Scraper:
 
 		return no_brakline
 
-	def pack_json(self, string_data):
+	def pack_json(self, string_data, endpoint):
 
 		data = self.parse_data_for_json(string_data)
 		try:
 			# READY JSON TO BE SENT TO THE DB
 			json_data = json.loads(data)
 			#json_final_data = json_data['text'].replace("&quot;","CHUJ CI W CZOKO")
-			self.send_to_api(json_data)
+			self.send_to_api(json_data, endpoint)
 		except Exception as e:
 			pass
 
@@ -157,8 +158,14 @@ class Scraper:
 				"likes" : likes,
 				"userid" : user_id
 			}
+
+			user_data = {
+				"author" : comment["snippet"]["topLevelComment"]["snippet"]["authorDisplayName"],
+				"userid" : user_id
+			}
 			
-			self.pack_json(comment_data)
+			self.pack_json(comment_data, "comments")
+			self.pack_json(user_data, "users")
 
 	def add_reply_to_db(self, reply, video_title):
 
@@ -178,7 +185,14 @@ class Scraper:
 			"userid" : reply['snippet']['authorChannelId']['value']
 		}
 
-		self.pack_json(comment_data)
+		user_data = {
+
+			"author" : reply['snippet']['authorDisplayName'],
+			"userid" : reply['snippet']['authorChannelId']['value']
+		}
+
+		self.pack_json(comment_data, "comments")
+		self.pack_json(user_data, "users")
 
 	def get_replies(self, video_id, video_title):
 
