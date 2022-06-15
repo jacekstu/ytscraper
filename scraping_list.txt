@@ -1,0 +1,133 @@
+{
+
+	"channels": [
+		{
+			"channel":"UC-c50wQPTz-8QiEmdJmrNZg",
+			"isLegacy":false,
+			"name":"",
+			"published":"2021-06-09",
+			"info": "Agresywny Wojtek"
+		},
+		{
+			"channel":"UCpnVbNpXkYpdhsOJop5nq-Q",
+			"isLegacy":false,
+			"name":"",
+			"published":"2021-06-09",
+			"info":"Marcin Kto Paleciok"
+		},
+		{
+			"channel":"UCr329SDaS83S-7ej785lbrg",
+			"isLegacy":false,
+			"name":"",
+			"published":"2021-06-09",
+			"info": "Seba Kto the faceless"
+		},
+		{
+			"channel":"UCSNnbmbVHRFvjwI2T-K50gQ",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info":"Grzegorz Walga"
+		},
+		{
+			"channel":"UCf2I9XB8rJndXicUZyzhiiw",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "minikox"
+		},
+		{
+			"channel":"UCgBf8ejz0B911-SVmlI3v5Q",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info":"Barbell Brothers"
+		},
+		{
+			"channel":"UCCwsb6pCsJYFp53h9prxXtg",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "KFD"
+		},
+		{
+			"channel":"UCzQSF_yulmp9hQQHpTebZpA",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "SQATS and MILKS"
+		},
+		{
+			"channel":"UCFh1OK9za2KBEfi8sOv9fnQ",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "AJ polish american"
+		},
+		{
+			"channel":"UCgbv5BaqWD4QGqOWacSvnaA",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "Polish Fitness FREak"
+		},
+		{
+			"channel":"UCrfmosKhv-dut_uR8xNg43Q",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "By jak Herkules"
+		},
+		{
+			"channel":"UCxep3u1F5fzLYozwv-q-JQQ",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "kulturtytska dla laika"
+		},
+		{
+			"channel":"UC2AyohFiDUS3K98h5dJVfog",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "Warszawskie Pedaly"
+		},
+		{
+			"channel":"UCsOsC07_jdCII52CAW9SbUg",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "Mowiac inaczej"
+		},
+		{
+			"channel":"UCIj6yjWVKPKO5zNLBjQ8Beg",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "Arlena Witt"
+		},
+		{
+			"channel":"UCUercAwR2To1Zx6GA6ZP2TQ",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "Kasia Gandor"
+		},
+		{
+			"channel":"UCzn6vAfspIcagLax1fck_jw",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "Pasja informatyki"
+		},
+		{
+			"channel":"UC_7PqixGIdE-jjoHKMPYpGA",
+			"isLegacy":false,
+			"name":"",
+			"published":"1111-06-09",
+			"info": "Uwaga Naukowy belkot"
+		}
+	]
+	
+}
+
