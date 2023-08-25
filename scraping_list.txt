@@ -90,7 +90,7 @@
 			"isLegacy":false,
 			"name":"",
 			"published":"1111-06-09",
-			"info": "Warszawskie Pedaly"
+			"info": "Warszawski Koks"
 		},
 		{
 			"channel":"UCsOsC07_jdCII52CAW9SbUg",
