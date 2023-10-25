@@ -9,7 +9,7 @@ import datetime
 
 class Scraper:
 
-	def __init__(self, api_key, post_url):
+	def __init__(self, api_key:str, post_url:str):
 		
 		self.api_key = os.environ.get('API_KEY')
 		self.post_url = post_url
@@ -18,7 +18,7 @@ class Scraper:
 		self.test = []
 		self.channel_title = ""
 
-	def save_to_file(self, data):
+	def save_to_file(self, data:str):
 		db_file = open("all_data.txt", "a", encoding="utf-8")
 		json.dump(data, db_file, ensure_ascii=False)
 	
@@ -27,7 +27,7 @@ class Scraper:
 		#print(self.http_response.content)
 
 
-	def parse_data_for_json(self, string_data):
+	def parse_data_for_json(self, string_data:str) -> str:
 		#Turn dictionary into a string for json loading
 		self.save_to_file(string_data)
 		string_data = str(string_data)
